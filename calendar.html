@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset='utf-8' />
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script>
+
+    //הכנת לוח שנה 
+    document.addEventListener('DOMContentLoaded', function () {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth'
+      });
+      calendar.render();
+      document.addEventListener('DOMContentLoaded', function () {
+        axios.get("https://myserver.com/events").then((res) => {
+          var cale
+        })
+      })
+      // axios.get("https://eventsapi.onrender.com/api/Events").then(res => {
+
+      //   var calendarEl = document.getElementById('calendar');
+      //   var calendar = new FullCalendar.Calendar(calendarEl, {
+      //     initialView: 'dayGridMonth',
+      //     events: res.data
+      //   });
+      //   calendar.render();
+      // }
+      // )
+    });
+
+    //הוספת מטלה    
+    function add() {
+      //פתיחת האינפוטים בעת לחיצה
+      let titleEl
+      let eventDateEl
+      titleEl = document.createElement("input")
+      eventDateEl = document.createElement("input")
+      document.body.appendChild(titleEl)
+      document.body.appendChild(eventDateEl)
+      titleEl.id = "title"
+      titleEl.type = "text"
+      eventDateEl.id = "eventDate"
+      eventDateEl.type = "date"
+      titleEl.placeholder = "Title"
+
+      // let buttonEl
+      // buttonEl = document.createElement("button")
+      // document.body.appendChild(buttonEl)
+      // buttonEl.placeholder="Post"
+
+
+    }
+    //כפתור הוספה 
+    function post() {
+      let titel = document.getElementById("title").value
+      let eventDate = document.getElementById("eventDate").value
+      console.log(titel)
+      console.log(eventDate)
+      axios.post("https://eventsapi.onrender.com/api/Events", { "title": `${titel}`, "start": `${eventDate}` })
+        .then((res) => console.log(res.data.start))
+    }
+
+    function delet() {
+      let ulEl = document.createElement("ul")
+      axios.get("https://eventsapi.onrender.com/api/Events",).then((res) => //{console.log(res.data)}
+      {
+        for (let index of res.data) {
+          console.log('data: ', res.data);
+          let liEl = document.createElement("li")
+          let checkboxEl = document.createElement('input');
+          checkboxEl.type = "checkbox";
+          let lengthOfList = res.data.length;
+          console.log('length: ', lengthOfList);
+          checkboxEl.id = `${index.id - lengthOfList}`;
+          liEl.id = `${index.id - lengthOfList}`;
+          liEl.innerHTML = index.title
+          ulEl.appendChild(checkboxEl)
+          ulEl.appendChild(liEl)
+        }
+        document.body.appendChild(ulEl)
+        let buttonEl = document.createElement("button")
+        document.body.appendChild(buttonEl)
+        buttonEl.innerText = "delete--"
+        buttonEl.setAttribute("onclick", "ToRemove()")
+
+      })
+    }
+    function ToRemove() {
+      let ilLengthEl = document.getElementsByTagName("li").length;//
+      for (let index = 0; index < ilLengthEl; index++) {
+        console.log('to remove: ', document.getElementById(`${index}`))
+        if (document.getElementById(`${index}`).checked == true) {
+          console.log("true: ", document.getElementsByTagName("li")[index].innerText)
+          axios.delete("https://eventsapi.onrender.com/api/Events/",index)
+            .then((res) => console.log(res.data))
+        }
+
+
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <button onclick="add()">Add</button>
+  <button onclick="delet()">Delet</button>
+  <button onclick="update()">Update</button>
+  <button onclick="post()">Post++</button>
+  <div id='calendar'></div>
+
+</body>
+
+</html>
